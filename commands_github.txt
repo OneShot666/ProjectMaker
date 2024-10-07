@@ -1,0 +1,58 @@
+Liste des commandes utiles avec GitHub :
+- Lancer la console Git Bash et aller dans le répertoire voulu.
+
+Projet :
+- Lancer un projet Git :
+git init
+
+- Créer un fichier .gitignore :
+[Pratique pour éviter d'envoyer certains fichiers comme __pycache__]
+echo "__pycache__/" >> .gitignore
+
+- Ajouter un fichier dans l'update :
+git add nom_fichier
+
+- Valider les fichiers ajoutés pour l'update :
+git commit -m "Message du commit"
+
+- Lier le projet au compte GitHub :
+[Le projet doit déjà exister dans les repositories du compte GitHub]
+git remote add origin https://github.com/nom-utilisateur/projet.git
+
+- Envoyer l'update :
+git push -u origin main
+
+Branches :
+- Créer et basculer sur une branche :
+git checkout -b nom_branche
+
+- Envoyer une branche vers le GitHub :
+git push origin nouvelle-branche
+
+- Fusionner la branche A avec la branche B :
+git checkout A
+git merge B
+
+- Supprimer une branche localement :
+git branch -d nom_branche
+
+- Supprimer une branche du projet GitHub :
+git push origin --delete nom_branche
+
+- Mettre à jour localement avec le projet GitHub :
+git pull origin main
+
+- Afficher l'historique des commits :
+git log
+
+- Revenir à un commit précédent (use commit hash) :
+git checkout commit-hash
+
+- Annuler les modifications et revenir à un commit précédent :
+git reset --hard commit-hash
+
+- Voir les fichiers modifiés :
+git status
+
+- Restaurer un fichier :
+git restore nom_fichier
