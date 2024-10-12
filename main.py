@@ -8,11 +8,6 @@ import sys
 import os
 import re
 
-# ! Check with incorrect name and path (+ non-game type)
-# ! Make test with os.path.abspath() (add path if just file name but is path correct ?)
-# ! Add file in data/last_path.txt fill by main.py and use by unmaker.py
-# ! Check if unmaker.py work
-
 
 # [v0.0.1] Have most of main variables (version, date of creation, path)
 # [v0.0.2] Have most of main functions (start, save, run, quit)
@@ -20,15 +15,15 @@ import re
 # [v0.0.4] Make function to use text files in src and complete programs inn new project
 # [v0.0.5] Make function to run main program of new project
 # [v0.0.6] Ask player name, path and if project is game when launching
-# [v0.0.7] Check if data enterez by user are valid
-# ! [v0.0.8] In new project, make main.py auto-detect project name and update it
+# [v0.0.7] Check if data enterez by user are valid (may need upgrade ?)
+# [v0.0.8] In new project, make main.py auto-detect project name and update it
 # ! [v0.0.9] Couple new project with Game_Idea_Maker ?
 # ! [v0.1.0] Open new project with PyCharm
 class Main:                                                                     # Main class
     def __init__(self, path_to_make=None, project_name=None, is_game=None):
         self.name = "Project maker"
         self.creator = "One Shot"
-        self.version = "v0.0.7"
+        self.version = "v0.0.8"
         self.birthday: str = None
         # File data
         # self.path = os.getcwd()
@@ -54,7 +49,9 @@ class Main:                                                                     
     def is_valid_directory_path(self, path):
         try:                                                                    # Check if valid path
             abs_path = os.path.abspath(path)                                    # Check if path can be turn into abspath
-            is_valid = self.is_valid_filename(path)
+            correct_path = path.replace("/", "").replace("\\", "").replace(":", "")
+            print(f"{path}\n{correct_path}")    # !!!
+            is_valid = self.is_valid_filename(correct_path)
             if not is_valid:
                 return False
             return True
@@ -73,6 +70,7 @@ class Main:                                                                     
                 os.makedirs(path)
         with open(f"{self.path}/data/data.txt", 'w') as file:
             file.write("")
+            file.close()
 
     def look_for_birthday(self):
         if self.birthday is None:                                               # If first launch
@@ -81,6 +79,7 @@ class Main:                                                                     
                 birthday = lines[3].strip() if len(lines) >= 4 else None        # Check if data saved
             with open(f"{self.path}/data/data.txt", 'w') as file:
                 self.birthday = self.get_current_date() if birthday is None else birthday
+            file.close()
 
     def save_game_data(self):                                                   # Write most of the game data
         with open(f"{self.path}/data/data.txt", 'w') as file:
@@ -88,6 +87,7 @@ class Main:                                                                     
             file.write(self.creator + "\n")
             file.write(self.version + "\n")
             file.write(self.birthday + "\n")
+            file.close()
 
     @staticmethod
     def modify_file_line(filename, line_number, text):
@@ -102,11 +102,13 @@ class Main:                                                                     
 
         with open(filename, 'w') as file:                                       # Update
             file.writelines(lines)
+        file.close()
 
     def run(self):                                                              # Main function
         self.greetings()
         self.ask_user_data()
         self.create_new_project()
+        self.save_last_path()
         self.Close_program()
 
     def greetings(self):                                                        # Present project
@@ -125,10 +127,9 @@ class Main:                                                                     
         print(f"Chemin par défaut : {self.path.parent}")
         while self.given_path is None:
             path = input("Entrez le chemin de votre nouveau projet (ENTRÉE pour chemin par défaut) : ")
-            print(path.replace("\\", ""))  # !!!
             if path == "" or path is None:                                      # Default path
                 self.given_path = self.path.parent
-            elif self.is_valid_directory_path(path.replace("\\", "")):          # Check if path valid
+            elif self.is_valid_directory_path(path):                            # Check if path valid
                 self.given_path = path
             else:
                 print("Ce chemin n'est pas correct !")
@@ -161,16 +162,23 @@ class Main:                                                                     
                 content = file.read()
             with open(os.path.join(project_path, 'test.py'), 'w') as new_file:
                 new_file.write(content)
+        file.close()
+        new_file.close()
 
         # Launch main file
         to_launch = os.path.join(project_path, 'main.py')                       # Will launch new made main program
-        command = f'python "{to_launch}"'
         try:                                                                    # Use python directly
             subprocess.run(['python', to_launch], check=True)
         except subprocess.CalledProcessError:                                   # Use command on cmd
+            command = f'python "{to_launch}"'
             os.system(command)
 
         print(f"Projet '{self.given_name}' créé à '{self.given_path}' avec succès !")
+
+    def save_last_path(self):                                                   # Save the last path project in text file
+        with open(os.path.join(self.path, "data", 'last_path.txt'), 'w') as path_file:
+            path_file.write(f"{self.given_path}/{self.given_name}")
+            path_file.close()
 
     @staticmethod
     def Close_program():                                                       # Exit program

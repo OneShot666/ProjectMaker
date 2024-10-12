@@ -7,13 +7,15 @@ import datetime
 import pygame
 import os
 
+""" Auto-imported by ProjectMaker """
 
-# ! [v0.0.1] First tasks
-# ! [v0.0.2] Second tasks
+
+# [v0.0.1] Basic functions
+# ! [v0.0.2] Next tasks
 # ! [v1.0.0] Final tasks
 class Main:                                                                     # Main class
-    def __init__(self, name="Project name"):
-        self.name = name
+    def __init__(self, name=None):
+        self.name = self.get_project_name(name)
         self.creator = "One Shot"
         self.version = "v0.0.1"
         self.birthday = None
@@ -35,7 +37,7 @@ class Main:                                                                     
         self.main_font = None
         # File data
         # self.path = os.getcwd()
-        self.path = Path(__file__).parent                                       # Current programm path
+        self.path = str(Path(__file__).parent)                                  # Current programm path
         self.Files = ["data", "fonts", "images", "musics", "saves", "sounds"]
         # Game data
         self.pressed = pygame.key.get_pressed()
@@ -62,6 +64,10 @@ class Main:                                                                     
         # Main function
         self.first_launch_game()
         self.run()
+
+    @staticmethod
+    def get_project_name(name):
+        return str(os.path.basename(Path(__file__).parent)) if name is None else name
 
     @staticmethod
     def get_current_date():
